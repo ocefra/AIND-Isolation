@@ -38,6 +38,18 @@ def custom_score(game, player):
     """
 
     # TODO: finish this function!
+    # Just for initial testing, use improved_score from sample_players.
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    return float(own_moves - opp_moves)
+
+
     raise NotImplementedError
 
 
@@ -83,32 +95,26 @@ class CustomPlayer:
     def get_move(self, game, legal_moves, time_left):
         """Search for the best move from the available legal moves and return a
         result before the time limit expires.
-
         This function must perform iterative deepening if self.iterative=True,
         and it must use the search method (minimax or alphabeta) corresponding
         to the self.method value.
-
         **********************************************************************
         NOTE: If time_left < 0 when this function returns, the agent will
               forfeit the game due to timeout. You must return _before_ the
               timer reaches 0.
         **********************************************************************
-
         Parameters
         ----------
         game : `isolation.Board`
             An instance of `isolation.Board` encoding the current state of the
             game (e.g., player locations and blocked cells).
-
         legal_moves : list<(int, int)>
             A list containing legal moves. Moves are encoded as tuples of pairs
             of ints defining the next (row, col) for the agent to occupy.
-
         time_left : callable
             A function that returns the number of milliseconds left in the
             current turn. Returning with any less than 0 ms remaining forfeits
             the game.
-
         Returns
         -------
         (int, int)
@@ -140,29 +146,23 @@ class CustomPlayer:
 
     def minimax(self, game, depth, maximizing_player=True):
         """Implement the minimax search algorithm as described in the lectures.
-
         Parameters
         ----------
         game : isolation.Board
             An instance of the Isolation game `Board` class representing the
             current game state
-
         depth : int
             Depth is an integer representing the maximum number of plies to
             search in the game tree before aborting
-
         maximizing_player : bool
             Flag indicating whether the current search depth corresponds to a
             maximizing layer (True) or a minimizing layer (False)
-
         Returns
         -------
         float
             The score for the current search branch
-
         tuple(int, int)
             The best move for the current branch; (-1, -1) for no legal moves
-
         Notes
         -----
             (1) You MUST use the `self.score()` method for board evaluation
@@ -178,35 +178,27 @@ class CustomPlayer:
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
         """Implement minimax search with alpha-beta pruning as described in the
         lectures.
-
         Parameters
         ----------
         game : isolation.Board
             An instance of the Isolation game `Board` class representing the
             current game state
-
         depth : int
             Depth is an integer representing the maximum number of plies to
             search in the game tree before aborting
-
         alpha : float
             Alpha limits the lower bound of search on minimizing layers
-
         beta : float
             Beta limits the upper bound of search on maximizing layers
-
         maximizing_player : bool
             Flag indicating whether the current search depth corresponds to a
             maximizing layer (True) or a minimizing layer (False)
-
         Returns
         -------
         float
             The score for the current search branch
-
         tuple(int, int)
             The best move for the current branch; (-1, -1) for no legal moves
-
         Notes
         -----
             (1) You MUST use the `self.score()` method for board evaluation
