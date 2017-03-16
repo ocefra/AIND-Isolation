@@ -172,7 +172,22 @@ class CustomPlayer:
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
 
-        # TODO: finish this function!
+        if not depth or not game.get_legal_moves():
+            return self.score(game, self), (-1, -1)
+
+        # The function to apply for choosing the best move depends on whether we are at a MAX or a MIN node.
+        fn = max if maximizing_player else min
+
+        # If depth is 1, return the best next move.
+        if depth == 1:
+            return fn((self.score(game.forecast_move(move), self), move) for move in game.get_legal_moves())
+        # If depth is greater than 1, recurse.
+        else:
+            (best_score, move), best_move = fn((self.minimax(game.forecast_move(move),
+                                                             depth - 1, maximizing_player), move) \
+                                               for move in game.get_legal_moves())
+            return best_score, best_move
+
         raise NotImplementedError
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
