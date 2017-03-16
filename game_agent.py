@@ -124,24 +124,50 @@ class CustomPlayer:
 
         self.time_left = time_left
 
-        # TODO: finish this function!
-
         # Perform any required initializations, including selecting an initial
         # move from the game board (i.e., an opening book), or returning
         # immediately if there are no legal moves
+        if not legal_moves:
+            return (-1, -1)
 
-        try:
-            # The search method call (alpha beta or minimax) should happen in
-            # here in order to avoid timeout. The try/except block will
-            # automatically catch the exception raised by the search method
-            # when the timer gets close to expiring
-            pass
+        # If this is the opening move
+        if game.move_count <= 1:
+            # pick the one that scores best on the score function.
+            score, best_move = max((self.score(game, self), move) for move in legal_moves)
+            return best_move
 
-        except Timeout:
-            # Handle any actions required at timeout, if necessary
-            pass
+        else:
+            # Is the player the maximizing player, i.e. the active player in the current game?
+            maximizing_player = game.active_player == game.__player_1__
 
-        # Return the best move from the last completed search iteration
+        # try:
+        #     # The search method call (alpha beta or minimax) should happen in
+        #     # here in order to avoid timeout. The try/except block will
+        #     # automatically catch the exception raised by the search method
+        #     # when the timer gets close to expiring
+        #     pass
+
+            try:
+                # If iterative, increment depth each time.
+                if self.iterative:
+                    depth = 1
+                    while True:
+                        if self.time_left() < self.TIMER_THRESHOLD:
+                            raise Timeout()
+                        # To avoid duplicating code (same code for minimax and alphabeta), create a string with the name
+                        # of the method as variable, and evaluate it using `eval`.
+                        best_score, best_move = eval('self.' + self.method + '(game, depth, maximizing_player)')
+                        depth += 1
+                # If not iterative, do a depth-limited search using either minimax or alphabeta.
+                else:
+                    best_score, best_move = eval('self.' + self.method + '(game, self.search_depth, maximizing_player)')
+                    return best_move
+
+            except Timeout:
+                # Handle any actions required at timeout, if necessary
+                # Return the best move found in the last search iteration performed.
+                return best_move
+
         raise NotImplementedError
 
     def minimax(self, game, depth, maximizing_player=True):
