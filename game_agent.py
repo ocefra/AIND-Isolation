@@ -7,6 +7,7 @@ You must test your agent's strength against a set of agents with known
 relative strength using tournament.py and include the results in your report.
 """
 import random
+import operator
 
 
 class Timeout(Exception):
@@ -198,20 +199,23 @@ class CustomPlayer:
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
 
-        if not depth or not game.get_legal_moves():
-            return self.score(game, self), (-1, -1)
+        no_legal_move = (-1, -1)
+        legal_moves = game.get_legal_moves()
+
+        if not depth or not legal_moves:
+            return self.score(game, self), no_legal_move
 
         # The function to apply for choosing the best move depends on whether we are at a MAX or a MIN node.
         fn = max if maximizing_player else min
 
         # If depth is 1, return the best next move.
         if depth == 1:
-            return fn((self.score(game.forecast_move(move), self), move) for move in game.get_legal_moves())
+            return fn((self.score(game.forecast_move(move), self), move) for move in legal_moves)
         # If depth is greater than 1, recurse.
         else:
             (best_score, move), best_move = fn((self.minimax(game.forecast_move(move),
                                                              depth - 1, maximizing_player), move) \
-                                               for move in game.get_legal_moves())
+                                               for move in legal_moves)
             return best_score, best_move
 
         raise NotImplementedError
@@ -249,5 +253,32 @@ class CustomPlayer:
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
 
-        # TODO: finish this function!
+        no_legal_move = (-1, -1)
+        legal_moves = game.get_legal_moves()
+
+        if not depth or not legal_moves:
+            return self.score(game, self), no_legal_move
+
+        best_move = no_legal_move
+        best_score = float("-inf") if maximizing_player else float("inf")
+
+        # Variables for the parts of the computation which differ between MAX and MIN nodes.
+        max_or_min = 'max' if maximizing_player else 'min'
+        comparison_op = operator.gt if maximizing_player else operator.lt
+        param = {'max': alpha, 'min': beta}
+        fn = max if maximizing_player else min
+
+        # Expand node.
+        for legal_move in legal_moves:
+            score, move = self.alphabeta(game.forecast_move(legal_move), depth - 1,
+                                         param['max'], param['min'], not maximizing_player)
+            if comparison_op(score, best_score):
+                best_score, best_move = score, legal_move
+            # Update param (alpha if MAX, beta if MIN).
+            param[max_or_min] = fn(param[max_or_min], best_score)
+
+            if param['min'] <= param['max']:
+                break
+        return best_score, best_move
+
         raise NotImplementedError
