@@ -2,7 +2,7 @@
 
 I have found it very **hard to improve on improved_score**. Both because it is very fast, and because it captures the essential intuition about the goodness of the board state: the advantage of a player over their opponent in terms of the number of extra moves available to the player. I have implemented a number of other heuristic functions which build on improved_score and try to refine it by adding more information to it. However, overall they seem not to add as much as I had expected to improved_score in the long run.
 
-I have evaluated the performance of each three heuristic functions during a **tournament of 1000 matches** played by the Student player against each of the following seven competitors:
+I have evaluated the performance of each of the three heuristic functions during a **tournament of 1000 matches** played by the Student player against each of the following seven competitors:
 
 + **Random:** An agent that randomly chooses a move each turn
 + **MM_Null:** CustomPlayer agent using fixed-depth minimax search and the null_score heuristic
@@ -12,7 +12,7 @@ I have evaluated the performance of each three heuristic functions during a **to
 + **AB_Open:** CustomPlayer agent using fixed-depth alpha-beta search and the open_move_score heuristic
 + **AB_Improved:** CustomPlayer agent using fixed-depth alpha-beta search and the improved_score heuristic
 
-In each of the three tournaments, the baseline player (ID_Improved) also played 1000 matches against each of the same seven competitors, which means that ID_Improved actually ended up playing 3000 matches in total. Each player's first move was always random, which accounts for part of the variation in results. Samples of size 1000 (for individual opponents) or 7000 (overall) are large enough to give a very reliable estimate of the performance in the long run. The tournaments were run on the same machine, in roughly similar conditions (although the first tournament had a bit of a handicap, as one fairly heavy application was also running all along, which was not the case for the other two tournaments). The machine is an HP EliteBook with an Intel(R) Core(TM) i7-4600U 2.10GHz CPU and 16 GB of RAM, running Ubuntu 16.04.
+In each of the **three tournaments**, the baseline player (ID_Improved) also played 1000 matches against each of the same seven competitors, which means that ID_Improved actually ended up playing a total of 3000 matches against each of the seven opponents. Each player's first move was always random, which accounts for part of the variation in results. Samples of size 1000 (for individual opponents) or 7000 (overall) are large enough to give a very reliable estimate of the performance in the long run. The tournaments were run on the same machine, in roughly similar conditions (although the first tournament had a bit of a handicap, as one fairly heavy application was also running all along, which was not the case for the other two tournaments). The machine is an HP EliteBook with an Intel(R) Core(TM) i7-4600U 2.10GHz CPU and 16 GB of RAM, running Ubuntu 16.04.
 
 The **rationale behind the tree proposed functions** is: 
 
@@ -24,7 +24,7 @@ The **rationale behind the tree proposed functions** is:
 
 Here are the **overall average percentages of wins** in the three 1000-match tournaments. The figures for ID_Improved are averaged over all 3 * 7000 matches played.
 
-| --- | ID_Improved | Heuristic_1 | Heuristic_2 | Heuristic 3 |
+| --- | ID_Improved | Heuristic_1 | Heuristic_2 | Heuristic_3 |
 | ------------ | ------------ | ------------- | ------------ | ------------ |
 | Estimate | 67.60 | **75.41** | 69.13 | 67.93 |
 | 95% CI: lower bound | 67.45 | **75.14** | 68.87 | 67.68 |
