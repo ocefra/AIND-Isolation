@@ -37,18 +37,145 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-
-    # TODO: finish this function!
-    # Just for initial testing, use improved_score from sample_players.
     if game.is_loser(player):
         return float("-inf")
 
     if game.is_winner(player):
         return float("inf")
 
+    # Heuristic 1
+    num_squares = game.width * game.height
+    num_blanks = len(game.get_blank_spaces())
+
+    center = (int(game.height / 2), int(game.width / 2))
+
+    own_position = game.get_player_location(player)
+    opp_position = game.get_player_location(game.get_opponent(player))
+
     own_moves = len(game.get_legal_moves(player))
     opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    return float(own_moves - opp_moves)
+
+    score = float(own_moves - opp_moves)
+
+    # If early game, try to stay in the middle.
+    if num_blanks > 0.8 * num_squares:
+        dist_to_center = tuple(abs(own_coord - center_coord) \
+                               for own_coord, center_coord in zip(own_position, center))
+        manhattan_dist_to_center = sum(dist_to_center)
+        return score + 1 / manhattan_dist_to_center if manhattan_dist_to_center else score + 2
+
+    # If mid game, try to stay close to the opponent.
+    elif num_blanks > 0.1 * num_squares:
+        dist_to_opp = tuple(abs(own_coord - opp_coord) \
+                            for own_coord, opp_coord in zip(own_position, opp_position))
+        manhattan_dist_to_opp = sum(dist_to_opp)
+        return score + 1 / manhattan_dist_to_opp
+
+    # If late game, simply try to maximise the player's open move advantage.
+    else:
+        return score
+
+
+    # ***************************************************************************************************
+    # # Heuristic 2: maximise the player's advantage while minimising the opponent's number of open moves.
+    # own_moves = len(game.get_legal_moves(player))
+    # opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    # return (own_moves - opp_moves) / opp_moves**2 if opp_moves else float("inf")
+    # ***************************************************************************************************
+
+
+    # ***************************************************************************************************
+    # # Heuristic 3
+    # opponent = game.get_opponent(player)
+    #
+    # own_moves = game.get_legal_moves(player) # player's legal moves
+    # opp_moves = game.get_legal_moves(opponent) # opponent's legal moves
+    # opp_all_moves = game.get_l_shaped_moves(opponent) # opponent's L-shaped-placed squares (free or not)
+    # own_position = game.get_player_location(player) # player's location
+    #
+    # # What is the player's advantage in terms on number of open moves? We want to maximise it.
+    # advantage = len(own_moves) - len(opp_moves)
+    #
+    # # Is the player blocking the opponent? If yes, add a bonus. For an equal number of extra moves,
+    # # this favours a position where the player blocks the opponent.
+    # blocking = 1 * (own_position in opp_all_moves)
+    # # blocking = 2 * (own_position in opp_all_moves)
+    #
+    # # Can the opponent block the player on the next move? If yes, penalise this.
+    # shared_moves = set(own_moves).intersection(set(opp_moves))
+    # blockable = 1 * (len(shared_moves) != 0)
+    #
+    # # Try different versions.
+    # # return float(10 * advantage + 4 * blocking - 2 * blockable)
+    # # return float(advantage + 2 * blocking)
+    # # return float(advantage - blockable)
+    # # return float(advantage + blocking - blockable)
+    # return float(advantage - blockable + 2 * blocking)
+    # # return float((advantage - blockable + 2 * blocking)**2)
+    # ***************************************************************************************************
+
+
+
+    # ***************************************************************************************************
+    # OTHER HEURISTICS
+
+    # Heuristic 4
+    # own_moves = len(game.get_legal_moves(player))
+    # opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    # return (own_moves / (2 * opp_moves)) if opp_moves else float("inf")
+
+
+
+    # # Heuristic 5: stay close to the opponent, while also looking for a position with as many open moves
+    # # as possible: the score is an additive combination of the number of available moves and the closeness
+    # # between the player and the opponent.
+    # own_position = game.get_player_location(player)
+    # opp_position = game.get_player_location(game.get_opponent(player))
+    #
+    # delta = tuple(abs(own_coord - opp_coord) for own_coord, opp_coord in zip(own_position, opp_position))
+    # # dist = max(delta)
+    # # score = 1 / dist
+    # manhattan_dist = sum(delta)
+    #
+    # own_moves = len(game.get_legal_moves(player))
+    # opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    # # score += float(own_moves - opp_moves)
+    # score = float(own_moves - opp_moves) - manhattan_dist
+    #
+    # return score
+
+
+
+    # # Heuristic 6: favour positions which share no moves with the opponent.
+    # # This includes, but is not limited to, partitions.
+    # own_moves = game.get_legal_moves(player)
+    # opp_moves = game.get_legal_moves(game.get_opponent(player))
+    # shared_moves = set(own_moves).intersection(opp_moves)
+    # return float(len(own_moves) - len(opp_moves) - 2 * len(shared_moves))
+
+
+
+    # # Heuristic 7: stay close to the centre.
+    # own_moves = len(game.get_legal_moves(player))
+    # opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    # score = float(own_moves - opp_moves)
+    #
+    # own_position = game.get_player_location(player)
+    # center = (int(game.height / 2), int(game.width / 2))
+    # dist_to_center = tuple(abs(own_coord - center_coord) \
+    #                        for own_coord, center_coord in zip(own_position, center))
+    # manhattan_dist_to_center = sum(dist_to_center)
+    # score += score - manhattan_dist_to_center
+    #
+    # return score
+
+
+
+    # # Heuristic 8
+    # own_moves = len(game.get_legal_moves(player))
+    # opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    # return (own_moves - opp_moves) / opp_moves if opp_moves else float("inf")
+    # ***************************************************************************************************
 
 
     raise NotImplementedError
@@ -85,7 +212,7 @@ class CustomPlayer:
     """
 
     def __init__(self, search_depth=3, score_fn=custom_score,
-                 iterative=True, method='minimax', timeout=10.):
+                 iterative=True, method='minimax', timeout=15.):
         self.search_depth = search_depth
         self.iterative = iterative
         self.score = score_fn
@@ -131,11 +258,20 @@ class CustomPlayer:
         if not legal_moves:
             return (-1, -1)
 
-        # If this is the opening move
+        # The best move is initially the one that scores best on the score function.
+        score, best_move = max((self.score(game, self), move) for move in legal_moves)
+
+        # Choosing a first move. This has no effect when running tournament.py, since starting positions
+        # are random. It is however useful in real tournaments.
+        # If this is the player's first move (either as player 1 or as player 2)
         if game.move_count <= 1:
-            # pick the one that scores best on the score function.
-            score, best_move = max((self.score(game, self), move) for move in legal_moves)
-            return best_move
+            # pick the center square if it is free
+            center = (int(game.height / 2), int(game.width / 2))
+            if center in game.get_blank_spaces():
+                return center
+            # or the best available move if the center is taken.
+            else:
+                return best_move
 
         else:
             # Is the player the maximizing player, i.e. the active player in the current game?
@@ -155,13 +291,14 @@ class CustomPlayer:
                     while True:
                         if self.time_left() < self.TIMER_THRESHOLD:
                             raise Timeout()
-                        # To avoid duplicating code (same code for minimax and alphabeta), create a string with the name
-                        # of the method as variable, and evaluate it using `eval`.
-                        best_score, best_move = eval('self.' + self.method + '(game, depth, maximizing_player)')
+                        # To avoid duplicating code (same code for minimax and alphabeta),
+                        # create a string which includes the name of the method as variable,
+                        # and evaluate it using `eval`.
+                        _, best_move = eval('self.' + self.method + '(game, depth, maximizing_player)')
                         depth += 1
                 # If not iterative, do a depth-limited search using either minimax or alphabeta.
                 else:
-                    best_score, best_move = eval('self.' + self.method + '(game, self.search_depth, maximizing_player)')
+                    _, best_move = eval('self.' + self.method + '(game, self.search_depth, maximizing_player)')
                     return best_move
 
             except Timeout:

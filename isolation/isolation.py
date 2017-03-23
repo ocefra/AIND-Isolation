@@ -122,6 +122,27 @@ class Board(object):
         new_board.apply_move(move)
         return new_board
 
+
+    def move_is_on_board(self, move):
+        """
+        Test whether a move is on the board, regardless of the current state of the board.
+
+        Parameters
+        ----------
+        move : (int, int)
+            A coordinate pair (row, column) indicating the next position for
+            the active player on the board.
+
+        Returns
+        ----------
+        bool
+            Returns True if the move is legal, False otherwise
+        """
+        row, col = move
+        return 0 <= row < self.height and \
+               0 <= col < self.width
+
+
     def move_is_legal(self, move):
         """
         Test whether a move is legal in the current game state.
@@ -138,9 +159,14 @@ class Board(object):
             Returns True if the move is legal, False otherwise
         """
         row, col = move
-        return 0 <= row < self.height and \
-               0 <= col < self.width and \
+
+        # return 0 <= row < self.height and \
+        #        0 <= col < self.width and \
+        #        self.__board_state__[row][col] == Board.BLANK
+
+        return self.move_is_on_board(move) and \
                self.__board_state__[row][col] == Board.BLANK
+
 
     def get_blank_spaces(self):
         """
@@ -164,6 +190,28 @@ class Board(object):
             The coordinate pair (row, column) of the input player.
         """
         return self.__last_player_move__[player]
+
+
+    def get_l_shaped_moves(self, player=None):
+        """
+        Return the list of all legal moves for the specified player.
+
+        Parameters
+        ----------
+        player : object (optional)
+            An object registered as a player in the current game. If None,
+            return the legal moves for the active player on the board.
+
+        Returns
+        ----------
+        list<(int, int)>
+            The list of coordinate pairs (row, column) of all L-shaped moves
+            for the player, unconstrained by the current game state.
+        """
+        if player is None:
+            player = self.active_player
+        return self.__get_all_moves__(self.__last_player_move__[player])
+
 
     def get_legal_moves(self, player=None):
         """
@@ -247,10 +295,10 @@ class Board(object):
 
         return 0.
 
-    def __get_moves__(self, move):
+
+    def __get_all_moves__(self, move):
         """
-        Generate the list of possible moves for an L-shaped motion (like a
-        knight in chess).
+        Generate the list of all positions placed in an L-shape (like a knight in chess) with respect to `move`.
         """
 
         if move == Board.NOT_MOVED:
@@ -261,9 +309,30 @@ class Board(object):
         directions = [(-2, -1), (-2, 1), (-1, -2), (-1, 2),
                       (1, -2),  (1, 2), (2, -1),  (2, 1)]
 
-        valid_moves = [(r+dr,c+dc) for dr, dc in directions if self.move_is_legal((r+dr, c+dc))]
+        moves = [(r+dr,c+dc) for dr, dc in directions if self.move_is_on_board((r+dr, c+dc))]
+
+        return moves
+
+
+    def __get_moves__(self, move):
+        """
+        Generate the list of possible (i.e. valid) moves for an L-shaped motion (like a knight in chess).
+        """
+
+        # if move == Board.NOT_MOVED:
+        #     return self.get_blank_spaces()
+        #
+        # r, c = move
+        #
+        # directions = [(-2, -1), (-2, 1), (-1, -2), (-1, 2),
+        #               (1, -2),  (1, 2), (2, -1),  (2, 1)]
+        #
+        # valid_moves = [(r+dr,c+dc) for dr, dc in directions if self.move_is_legal((r+dr, c+dc))]
+
+        valid_moves = [mv for mv in self.__get_all_moves__(move) if self.move_is_legal(mv)]
 
         return valid_moves
+
 
     def print_board(self):
         """DEPRECATED - use Board.to_string()"""
