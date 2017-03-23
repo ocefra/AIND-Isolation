@@ -4,7 +4,7 @@ I have found it very **hard to improve on improved_score**. Both because it is v
 
 I have evaluated the performance of each three heuristic functions during a **tournament of 1000 matches** played by the Student player against each of the following seven competitors:
 
-+ **Random:** An agent that randomly chooses a move each turn.
++ **Random:** An agent that randomly chooses a move each turn
 + **MM_Null:** CustomPlayer agent using fixed-depth minimax search and the null_score heuristic
 + **MM_Open:** CustomPlayer agent using fixed-depth minimax search and the open_move_score heuristic
 + **MM_Improved:** CustomPlayer agent using fixed-depth minimax search and the improved_score heuristic
@@ -12,7 +12,7 @@ I have evaluated the performance of each three heuristic functions during a **to
 + **AB_Open:** CustomPlayer agent using fixed-depth alpha-beta search and the open_move_score heuristic
 + **AB_Improved:** CustomPlayer agent using fixed-depth alpha-beta search and the improved_score heuristic
 
-In each of the three tournaments, the baseline player (ID_Improved) also played 1000 matches against each of the same seven competitors, which means the ID_Improved actually ended up playing 3000 matches in total. Each player's first move was always random, which accounts for part of the variation in results. Samples of size 1000 (for individual opponents) or 7000 (overall) are large enough to give a very reliable estimate of the performance in the long run. The tournaments were run on the same machine, in roughly similar conditions (although the first tournament had a bit of a handicap, as one fairly heavy application was also running all along, which was not the case for the other two tournaments). The machine is an HP EliteBook with an Intel(R) Core(TM) i7-4600U 2.10GHz CPU and 16 GB of RAM, running Ubuntu 16.04.
+In each of the three tournaments, the baseline player (ID_Improved) also played 1000 matches against each of the same seven competitors, which means that ID_Improved actually ended up playing 3000 matches in total. Each player's first move was always random, which accounts for part of the variation in results. Samples of size 1000 (for individual opponents) or 7000 (overall) are large enough to give a very reliable estimate of the performance in the long run. The tournaments were run on the same machine, in roughly similar conditions (although the first tournament had a bit of a handicap, as one fairly heavy application was also running all along, which was not the case for the other two tournaments). The machine is an HP EliteBook with an Intel(R) Core(TM) i7-4600U 2.10GHz CPU and 16 GB of RAM, running Ubuntu 16.04.
 
 The **rationale behind the tree proposed functions** is: 
 
@@ -22,7 +22,7 @@ The **rationale behind the tree proposed functions** is:
 
 + **Heuristic 3:** compute the player's advantage, but penalise it (by subtracting one) if at least one of the open moves can be blocked by the opponent on the next move. In addition, reward a position which blocks the opponent (i.e. it is placed at a location which is positioned an L-shaped move away from the opponent).
 
-Here are the **overall average percentage of wins** in the three 1000-match tournaments. The figures for ID_Improved are averaged over all 7 * 3000 matches played.
+Here are the **overall average percentages of wins** in the three 1000-match tournaments. The figures for ID_Improved are averaged over all 3 * 7000 matches played.
 
 | --- | ID_Improved | Heuristic_1 | Heuristic_2 | Heuristic 3 |
 | ------------ | ------------ | ------------- | ------------ | ------------ |
